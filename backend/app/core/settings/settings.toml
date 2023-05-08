@@ -1,0 +1,43 @@
+[default]
+version = "0.0.0"
+
+api_prefix = '/api/v1'
+docs_url = "/docss"
+
+openapi_url = "/openapi.json"
+redoc_url = "/redoc"
+openapi_prefix = ""
+
+[development]
+title = "Dev FastAPI example application"
+debug = true
+
+DB_SCHEMA = 'sqlite+aiosqlite'
+DB_NAME = "db.sqlite3"
+
+ALLOWED_HOSTS = ['*', "http://localhost:5000"]
+
+api_prefix = '/api/v1'
+
+[production]
+title = "FastAPI example application"
+debug = false
+
+DB_SCHEMA = 'postgresql+asyncpg'
+DB_HOST = "database"
+DB_USER = "postgres"
+DB_PASSWORD = "postgres"
+DB_NAME = "fastapi_db"
+DB_PORT = 5432
+
+
+openapi_url = ""
+redoc_url = ""
+openapi_prefix = ""
+
+ALLOWED_HOSTS = [
+    "http://localhost",
+    "http://localhost:8080",
+    "http://localhost:5000",
+    "http://localhost:3000",
+]
