@@ -1,6 +1,7 @@
 from datetime import date
 from typing import List, Optional
 
+from app.db.tables.unittype_table import UnitType
 from app.models.domain.ingredient_domain import IngredientDomain
 from app.models.schema.base_schema import BaseSchema
 
@@ -22,6 +23,8 @@ class IngredientInUpdate(BaseSchema):
 
 class IngredientForResponse(BaseSchema, IngredientDomain):
     """Ingredient Schema"""
+
+    unit: UnitType
 
 
 class IngredientInResponse(BaseSchema):

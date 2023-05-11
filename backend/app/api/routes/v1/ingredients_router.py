@@ -8,37 +8,23 @@ from app.db.repositories.ingredient_repo import IngredientRepository
 from app.db.tables.account_table import Account
 from app.dependencies.authentication_deps import get_current_user_authorizer
 from app.dependencies.database import get_repository
-from app.models.schema.ingredient_schema import IngredientInCreate
+from app.models.schema.ingredient_schema import (
+    IngredientForResponse,
+    IngredientInCreate,
+    IngredientInResponse,
+    ListOfIngredientInResponse,
+)
 from app.services.commons import get_slug_from_title
 from app.services.ingredient_service import check_if_ingredients_exists
 
 router = APIRouter()
 
 
-class UnitType(BaseModel):
-    unit: str
-    slug: str
-
-    class Config:
-        orm_mode = True
-
-
-class IngredientInResponse(BaseModel):
-    title: str
-    summary: str
-    slug: str
-    quantity: float
-    unit: UnitType
-
-    class Config:
-        orm_mode = True
-
-
 # Listar ingredient
 @router.get(
     "/",
     name="ingredients:list-ingredients",
-    response_model=List[IngredientInResponse],
+    response_model=ListOfIngredientInResponse,
     status_code=status.HTTP_200_OK,
 )
 async def list_ingredients(
@@ -46,10 +32,14 @@ async def list_ingredients(
     ingredient_repo: IngredientRepository = Depends(
         get_repository(IngredientRepository)
     ),
-) -> List[IngredientInResponse]:
+) -> ListOfIngredientInResponse:
     results = await ingredient_repo.list_all_ingredients(account_id=account.id)
 
-    return [IngredientInResponse.from_orm(result) for result in results]
+    ingredients = [IngredientForResponse.from_orm(result) for result in results]
+
+    return ListOfIngredientInResponse(
+        ingredients=ingredients, ingredients_count=len(ingredients)
+    )
 
 
 # TODO: Melhorar Excluir ingredient
@@ -93,9 +83,10 @@ async def get_ingredient(
             account_id=account.id, slug=slug_or_id
         )
     print(ingredient)
-    return IngredientInResponse.from_orm(ingredient)
+    return IngredientInResponse(ingredient=IngredientForResponse.from_orm(ingredient))
 
 
+# TODO: Validar se existe unidade ja criada
 # Adicionar ingredient
 @router.post(
     "/",
@@ -131,8 +122,8 @@ async def create_ingredient(
         expired_date=new_ingredient.expired_date,
         unit=new_ingredient.unit,
     )
-
-    return IngredientInResponse.from_orm(ingredient_row)
+    ingredient = IngredientForResponse.from_orm(ingredient_row)
+    return IngredientInResponse(ingredient=ingredient)
 
 
 # Atualizar ingredient

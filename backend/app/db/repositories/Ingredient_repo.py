@@ -1,6 +1,7 @@
-from datetime import datetime
+from datetime import date
 
-from sqlalchemy import Select, Tuple, delete, select
+from fastapi import HTTPException
+from sqlalchemy import Select, Tuple, delete, exc, select
 from sqlalchemy.orm import joinedload
 
 from app.db.errors import EntityDoesNotExist
@@ -70,7 +71,7 @@ class IngredientRepository(BaseRepository):
         summary: str | None,
         quantity: int,
         account_id: int,
-        expired_date: datetime,
+        expired_date: date,
         unit: str,
     ) -> Ingredient:
         new_ingredient: Ingredient = Ingredient(
@@ -87,6 +88,7 @@ class IngredientRepository(BaseRepository):
         try:
             self.session.add(instance=new_ingredient)
             await self.session.commit()
+            await self.session.refresh(new_ingredient)
 
         except exc.IntegrityError:
             await self.session.rollback()
@@ -95,5 +97,4 @@ class IngredientRepository(BaseRepository):
                 status_code=409,
                 detail="Resource already exists",
             )
-        await self.session.refresh(new_ingredient)
         return new_ingredient

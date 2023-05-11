@@ -14,6 +14,7 @@ class Recipe(Base, IdMixin):
     __tablename__ = "recipes"
 
     account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
+
     title: Mapped[str] = mapped_column(
         String(75),
         nullable=False,
@@ -34,8 +35,5 @@ class Recipe(Base, IdMixin):
     unit: Mapped[UnitType] = relationship(lazy="joined")
 
     instructions: Mapped[str] = mapped_column(
-        default=None,
-    )
-    content: Mapped[str] = mapped_column(
         default=None,
     )
