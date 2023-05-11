@@ -1,9 +1,12 @@
+from datetime import datetime
+
 from sqlalchemy import Select, Tuple, delete, select
 from sqlalchemy.orm import joinedload
 
 from app.db.errors import EntityDoesNotExist
 from app.db.repositories.base import BaseRepository
 from app.db.tables.ingredient_table import Ingredient
+from app.db.tables.unittype_table import UnitType
 
 
 class IngredientRepository(BaseRepository):
@@ -58,3 +61,39 @@ class IngredientRepository(BaseRepository):
             return ingredient
 
         raise EntityDoesNotExist(f"Ingredient with slug {id} does not exist")
+
+    async def create_new_ingredient(
+        self,
+        *,
+        title: str,
+        slug: str,
+        summary: str | None,
+        quantity: int,
+        account_id: int,
+        expired_date: datetime,
+        unit: str,
+    ) -> Ingredient:
+        new_ingredient: Ingredient = Ingredient(
+            title=title,
+            slug=slug,
+            summary=summary,
+            quantity=quantity,
+            account_id=account_id,
+            expired_date=expired_date,
+            unittype_id=None,
+            unit=UnitType(unit=unit, slug=unit.lower()),
+        )
+
+        try:
+            self.session.add(instance=new_ingredient)
+            await self.session.commit()
+
+        except exc.IntegrityError:
+            await self.session.rollback()
+
+            raise HTTPException(
+                status_code=409,
+                detail="Resource already exists",
+            )
+        await self.session.refresh(new_ingredient)
+        return new_ingredient
