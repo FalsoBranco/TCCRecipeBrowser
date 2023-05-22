@@ -4,6 +4,7 @@ from app.api.routes.v1 import (
     accounts_router,
     authentication_router,
     ingredients_router,
+    recipeingredient_router,
     recipes_router,
 )
 
@@ -27,5 +28,10 @@ api_router.include_router(
 api_router.include_router(
     recipes_router.router,
     prefix="/recipes",
-    tags=["Recipes"],
+    tags=["Recipe"],
+)
+api_router.include_router(
+    recipeingredient_router.router,
+    prefix="/recipe-ingredient",
+    tags=["Recipe Ingredient"],
 )

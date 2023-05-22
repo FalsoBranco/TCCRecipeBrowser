@@ -34,7 +34,6 @@ async def list_recipes(
     return ListOfRecipeInResponse(recipes=recipes, recipes_count=len(recipes))
 
 
-# TODO: Melhorar Excluir recipe
 @router.delete(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -46,8 +45,6 @@ async def delete_recipe(
     recipe_repo: RecipeRepository = Depends(get_repository(RecipeRepository)),
 ) -> None:
     await recipe_repo.delete_recipe(account_id=account.id, recipe_id=id)
-
-    # TODO Validar se deletou com sucesso
 
 
 # Escolher recipe pelo slug ou id
@@ -74,7 +71,6 @@ async def get_recipe(
     return RecipeInResponse(recipe=RecipeForResponse.from_orm(recipe))
 
 
-# TODO: Validar se existe unidade ja criada
 # Adicionar recipe
 @router.post(
     "/",
@@ -110,3 +106,24 @@ async def create_recipe(
     )
 
     return RecipeInResponse(recipe=RecipeForResponse.from_orm(recipe_row))
+
+
+@router.get("/{recipe_id}/ingredients")
+async def get_recipe_with_ingredients(
+    recipe_id: int = Path(...),
+    account: Account = Depends(get_current_user_authorizer()),
+    recipe_repo: RecipeRepository = Depends(get_repository(RecipeRepository)),
+):
+    await recipe_repo.get_recipe_instructions(
+        recipe_id=recipe_id, account_id=account.id
+    )
+
+    # ingredient_instructions: list[RecipeIngredientForResponse] = [
+    #     RecipeIngredientForResponse.from_orm(step) for step in recipe.ingredients
+    # ]
+
+    # recipe_for_response: RecipeWithInstructionsForResponse = (
+    #     RecipeWithInstructionsForResponse.from_orm(recipe)
+    # )
+    # recipe_for_response.ingredients = ingredient_instructions
+    # return RecipeWithInstructionInResponse(recipe=recipe_for_response)

@@ -1,8 +1,4 @@
-from datetime import datetime
-from typing import List, Optional
-
 from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
-from pydantic import BaseModel
 
 from app.db.repositories.ingredient_repo import IngredientRepository
 from app.db.tables.account_table import Account
@@ -42,7 +38,6 @@ async def list_ingredients(
     )
 
 
-# TODO: Melhorar Excluir ingredient
 @router.delete(
     "/{id}",
     status_code=status.HTTP_204_NO_CONTENT,
@@ -56,8 +51,6 @@ async def delete_ingredient(
     ),
 ) -> None:
     await ingredient_repo.delete_ingredient(account_id=account.id, ingredient_id=id)
-
-    # TODO Validar se deletou com sucesso
 
 
 # Escolher ingredient pelo slug ou id
@@ -86,7 +79,6 @@ async def get_ingredient(
     return IngredientInResponse(ingredient=IngredientForResponse.from_orm(ingredient))
 
 
-# TODO: Validar se existe unidade ja criada
 # Adicionar ingredient
 @router.post(
     "/",

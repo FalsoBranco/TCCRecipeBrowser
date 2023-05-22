@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 3891d7392357
+Revision ID: a66e6b0d72a0
 Revises: 
-Create Date: 2023-05-10 22:39:24.129987
+Create Date: 2023-05-21 23:10:39.847104
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '3891d7392357'
+revision = 'a66e6b0d72a0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -103,13 +103,11 @@ def upgrade() -> None:
     op.create_index(op.f('ix_menu_recipes_id'), 'menu_recipes', ['id'], unique=False)
     op.create_table('recipe_ingredients',
     sa.Column('quantity', sa.Float(), nullable=False),
-    sa.Column('unittype_id', sa.Integer(), nullable=False),
     sa.Column('recipe_id', sa.Integer(), nullable=False),
     sa.Column('ingredient_id', sa.Integer(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['ingredient_id'], ['ingredients.id'], ),
     sa.ForeignKeyConstraint(['recipe_id'], ['recipes.id'], ),
-    sa.ForeignKeyConstraint(['unittype_id'], ['unit_types.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_recipe_ingredients_id'), 'recipe_ingredients', ['id'], unique=False)

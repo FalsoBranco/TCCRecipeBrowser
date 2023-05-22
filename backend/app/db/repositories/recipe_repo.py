@@ -1,13 +1,23 @@
 from fastapi import HTTPException
 from sqlalchemy import delete, exc, select
+from sqlalchemy.ext.asyncio.session import AsyncSession
+from sqlalchemy.orm import joinedload
 
 from app.db.errors import EntityDoesNotExist
 from app.db.repositories.base import BaseRepository
+from app.db.repositories.unittype_repo import UnitTypeRepository
 from app.db.tables.recipe_table import Recipe
+from app.db.tables.recipeingredient_table import RecipeIngredient
 from app.db.tables.unittype_table import UnitType
+from app.services.commons import get_slug_from_title
+from app.services.unittype_service import check_if_unitytype_exists
 
 
 class RecipeRepository(BaseRepository):
+    def __init__(self, session: AsyncSession) -> None:
+        self.unittype_repo = UnitTypeRepository(session)
+        super().__init__(session)
+
     async def list_all_recipes(self, *, account_id: int):
         query = select(Recipe).where(Recipe.account_id == account_id)
 
@@ -22,7 +32,7 @@ class RecipeRepository(BaseRepository):
             .where(Recipe.account_id == account_id)
             .where(Recipe.id == recipe_id)
         )
-        result_row = await self.session.execute(query)
+        await self.session.execute(query)
 
         await self.session.commit()
 
@@ -69,6 +79,14 @@ class RecipeRepository(BaseRepository):
         instructions: str,
         unit: str,
     ):
+        new_unit = await check_if_unitytype_exists(
+            unittype_repo=self.unittype_repo,
+            slug=get_slug_from_title(unit),
+        )
+        print(new_unit)
+        if not new_unit:
+            new_unit = UnitType(unit=unit, slug=get_slug_from_title(unit))
+
         new_recipe: Recipe = Recipe(
             title=title,
             slug=slug,
@@ -77,7 +95,7 @@ class RecipeRepository(BaseRepository):
             account_id=account_id,
             instructions=instructions,
             unittype_id=None,
-            unit=UnitType(unit=unit, slug=unit.lower()),
+            unit=new_unit,
         )
 
         try:
@@ -93,3 +111,28 @@ class RecipeRepository(BaseRepository):
                 detail="Resource already exists",
             )
         return new_recipe
+
+    async def get_recipe_instructions(
+        self, *, account_id: int, recipe_id: int
+    ) -> Recipe:
+        query = (
+            select(Recipe).where(Recipe.id == recipe_id)
+            # .where(Recipe.account_id == account_id)
+            .options(
+                joinedload(
+                    Recipe.ingredients,
+                    innerjoin=True,
+                ).joinedload(
+                    RecipeIngredient.ingredient,
+                    innerjoin=True,
+                )
+            )
+        )
+        recipe_row = await self.session.execute(query)
+
+        result: Recipe | None = recipe_row.unique().scalar_one_or_none()
+        print(result.ingredients)
+        if not result:
+            raise EntityDoesNotExist
+
+        return result
