@@ -1,3 +1,5 @@
+import datetime
+
 from fastapi import HTTPException
 from sqlalchemy import delete, exc, select
 from sqlalchemy.ext.asyncio.session import AsyncSession
@@ -6,6 +8,7 @@ from sqlalchemy.orm import joinedload
 from app.db.errors import EntityDoesNotExist
 from app.db.repositories.base import BaseRepository
 from app.db.repositories.unittype_repo import UnitTypeRepository
+from app.db.tables.createditem_table import CreatedRecipe
 from app.db.tables.recipe_table import Recipe
 from app.db.tables.recipeingredient_table import RecipeIngredient
 from app.db.tables.unittype_table import UnitType
@@ -136,3 +139,15 @@ class RecipeRepository(BaseRepository):
             raise EntityDoesNotExist
 
         return result
+
+    async def make_recipe(self, *, recipe_id: int, quantity: int, account_id: int):
+        created_recipe = CreatedRecipe(
+            account_id=account_id,
+            quantity=quantity,
+            recipe_id=recipe_id,
+            created_at=datetime.datetime.now(),
+        )
+
+        self.session.add(created_recipe)
+        await self.session.commit()
+        await self.session.commit()

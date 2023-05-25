@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
 
 from app.db.repositories.recipe_repo import RecipeRepository
@@ -113,10 +115,11 @@ async def get_recipe_with_ingredients(
     recipe_id: int = Path(...),
     account: Account = Depends(get_current_user_authorizer()),
     recipe_repo: RecipeRepository = Depends(get_repository(RecipeRepository)),
-):
+) -> None:
     await recipe_repo.get_recipe_instructions(
         recipe_id=recipe_id, account_id=account.id
     )
+    return None
 
     # ingredient_instructions: list[RecipeIngredientForResponse] = [
     #     RecipeIngredientForResponse.from_orm(step) for step in recipe.ingredients
@@ -127,3 +130,17 @@ async def get_recipe_with_ingredients(
     # )
     # recipe_for_response.ingredients = ingredient_instructions
     # return RecipeWithInstructionInResponse(recipe=recipe_for_response)
+
+
+@router.post("/{recipe_id}/make")
+async def make_recipe(
+    recipe_id: Annotated[int, Path(...)],
+    quantity: Annotated[int, Body(...)],
+    account: Account = Depends(get_current_user_authorizer()),
+    recipe_repo: RecipeRepository = Depends(get_repository(RecipeRepository)),
+):
+    await recipe_repo.make_recipe(
+        recipe_id=recipe_id, quantity=quantity, account_id=account.id
+    )
+
+    return None

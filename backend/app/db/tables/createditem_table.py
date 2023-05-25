@@ -1,13 +1,9 @@
 from datetime import datetime
-from typing import Optional
 
-from sqlalchemy import DateTime, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import DateTime, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column
 
-from app.db.tables.account_table import Account
 from app.db.tables.base_class import Base, IdMixin
-from app.db.tables.ingredient_table import Ingredient
-from app.db.tables.unittype_table import UnitType
 
 
 class CreatedRecipe(Base, IdMixin):
@@ -20,6 +16,4 @@ class CreatedRecipe(Base, IdMixin):
         default=1,
     )
 
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), insert_default="now()"
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
