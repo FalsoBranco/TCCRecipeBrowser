@@ -5,37 +5,15 @@ import {
   VStack,
   Button,
   Center,
-  Text,
   Box,
   Heading,
-  Pressable,
   TextArea,
 } from 'native-base';
 import { Controller, useForm } from 'react-hook-form';
 import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
-import ingredientService from '@/services/IngredientService';
+import RecipeService from '@/services/RecipeService';
 
-const IngredientCreate = () => {
-  const [date, setDate] = useState(new Date());
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate;
-    setDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    DateTimePickerAndroid.open({
-      value: date,
-      onChange,
-      mode: currentMode,
-      is24Hour: true,
-    });
-  };
-
-  const showDatepicker = (onChange, value) => {
-    showMode('date');
-  };
-
+const RecipeCreate = () => {
   const {
     control,
     handleSubmit,
@@ -43,17 +21,16 @@ const IngredientCreate = () => {
   } = useForm();
   // } = useForm<SignInFormType>({ resolver: zodResolver(SignInFormSchema) });
   async function onSubmitForm(data) {
-    const ingredientData = {
-      ingredient: {
+    const recipeData = {
+      recipe: {
         title: data.title,
         summary: data.summary,
-        quantity: data.quantity,
+        amounts: data.amounts,
+        instructions: data.instructions,
         unit: data.unit,
-        expired_date: date.toISOString().split('T')[0],
       },
     };
-    console.log(ingredientData);
-    await ingredientService.create(ingredientData);
+    await RecipeService.create(recipeData);
   }
 
   return (
@@ -67,7 +44,7 @@ const IngredientCreate = () => {
             color: 'warmGray.50',
           }}
         >
-          Novo Ingrediente
+          Nova Receita
         </Heading>
         <VStack space={3} mt="5">
           <Controller
@@ -80,7 +57,7 @@ const IngredientCreate = () => {
                     bold: true,
                   }}
                 >
-                  Nome do Ingrediente
+                  Nome dda Receitas
                 </FormControl.Label>
                 <Input
                   placeholder="John"
@@ -92,7 +69,7 @@ const IngredientCreate = () => {
             )}
           />
           <Controller
-            name="quantity"
+            name="amounts"
             control={control}
             render={({ field: { onChange, onBlur, value } }) => (
               <FormControl isRequired>
@@ -101,7 +78,7 @@ const IngredientCreate = () => {
                     bold: true,
                   }}
                 >
-                  Quantidade
+                  Quantidade de Porções
                 </FormControl.Label>
                 <Input
                   placeholder="John"
@@ -134,18 +111,6 @@ const IngredientCreate = () => {
               </FormControl>
             )}
           />
-          <FormControl isRequired>
-            <FormControl.Label
-              _text={{
-                bold: true,
-              }}
-            >
-              Data de Validade
-            </FormControl.Label>
-            <Pressable onPress={showDatepicker}>
-              <Text>{date.toLocaleDateString('pt-BR')}</Text>
-            </Pressable>
-          </FormControl>
           <Controller
             name="summary"
             control={control}
@@ -157,6 +122,29 @@ const IngredientCreate = () => {
                   }}
                 >
                   Descrição
+                </FormControl.Label>
+                <TextArea
+                  autoCompleteType={true}
+                  maxW="300"
+                  h={32}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  value={value}
+                />
+              </FormControl>
+            )}
+          />
+          <Controller
+            name="instructions"
+            control={control}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <FormControl isRequired>
+                <FormControl.Label
+                  _text={{
+                    bold: true,
+                  }}
+                >
+                  Instruções
                 </FormControl.Label>
                 <TextArea
                   autoCompleteType={true}
@@ -182,4 +170,4 @@ const IngredientCreate = () => {
   );
 };
 
-export default IngredientCreate;
+export default RecipeCreate;

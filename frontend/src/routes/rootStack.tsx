@@ -5,6 +5,8 @@ import SignIn from '@/screens/SignIn';
 import MainAppDrawer from './mainAppDrawer';
 import IngredientDetail from '@/screens/IngredientDetail';
 import IngredientCreate from '@/screens/IngredientCreate';
+import RecipeCreate from '@/screens/RecipeCreate';
+import RecipeDetail from '@/screens/RecipeDetail';
 const { Screen, Navigator } = createStackNavigator();
 const RootStack = () => {
   return (
@@ -15,8 +17,16 @@ const RootStack = () => {
       <Screen name="Preload" component={Preload} />
       <Screen name="SignIn" component={SignIn} />
       <Screen name="MainApp" component={MainAppDrawer} />
-      <Screen name="DetailIngredient" component={IngredientDetail} />
+      <Screen
+        name="DetailIngredient"
+        component={IngredientDetail}
+        options={{
+          headerShown: true,
+        }}
+      />
+      <Screen name="DetailRecipe" component={RecipeDetail} />
       <Screen name="CreateIngredient" component={IngredientCreate} />
+      <Screen name="CreateRecipe" component={RecipeCreate} />
     </Navigator>
   );
 };

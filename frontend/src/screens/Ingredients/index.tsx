@@ -31,7 +31,9 @@ const Ingredients = () => {
         flex={1}
         data={data}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <Card data={item} />}
+        renderItem={({ item }) => (
+          <Card data={item} detail={'DetailIngredient'} />
+        )}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

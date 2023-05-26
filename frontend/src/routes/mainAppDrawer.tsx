@@ -31,7 +31,21 @@ const MainAppDrawer = () => {
             ),
           }}
         />
-        <Screen name="Recipes" component={Recipes} />
+        <Screen
+          name="Recipes"
+          component={Recipes}
+          options={{
+            headerRight: () => (
+              <Pressable
+                mr={4}
+                onPress={() => navigation.navigate('CreateRecipe')}
+                color="#fff"
+              >
+                <Ionicons name="create-outline" size={24} />
+              </Pressable>
+            ),
+          }}
+        />
         <Screen name="Settings" component={Settings} />
       </Navigator>
     </Box>

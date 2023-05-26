@@ -12,7 +12,7 @@ import {
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
 
-const Card = ({ data }) => {
+const Card = ({ data, detail }) => {
   const navigation = useNavigation();
   const [item, setItem] = useState(data);
 
@@ -26,7 +26,7 @@ const Card = ({ data }) => {
     setItem((state) => ({ ...state, quantity: state.quantity - 1 }));
   }
   function handleDetail(id) {
-    navigation.navigate('DetailIngredient', { params: { itemId: id } });
+    navigation.navigate(detail, { params: { itemId: id } });
   }
 
   return (
