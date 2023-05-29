@@ -30,7 +30,6 @@ class IngredientService {
   }
   async get(ingredientId: number) {
     try {
-      console.log(typeof ingredientId);
       const { data } = await api.get(`api/v1/ingredients/${ingredientId}`);
       return data;
     } catch (error) {
@@ -50,9 +49,31 @@ class IngredientService {
   async create(data) {
     try {
       console.log(data);
-      await api.post('api/v1/ingredients/', data);
+      const ingredient = await api.post('api/v1/ingredients/', data);
+      return ingredient.data;
     } catch (error) {
       console.log(error);
+    }
+  }
+  async delete(ingredientId) {
+    try {
+      await api.delete(`api/v1/ingredients/${ingredientId}/`);
+      return true;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async updateQuantity(ingredientId: number, data: object) {
+    return null;
+  }
+  async add_to_recipe(recipeId: number, ingredientId: number, data: object) {
+    try {
+      await api.post(
+        `/api/v1/recipe-ingredient/${recipeId}/ingredient/${ingredientId}`,
+        data
+      );
+    } catch (err) {
+      console.log(err);
     }
   }
 }

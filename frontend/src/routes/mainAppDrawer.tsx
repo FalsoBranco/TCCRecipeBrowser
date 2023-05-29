@@ -46,7 +46,6 @@ const MainAppDrawer = () => {
             ),
           }}
         />
-        <Screen name="Settings" component={Settings} />
       </Navigator>
     </Box>
   );

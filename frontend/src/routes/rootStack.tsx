@@ -7,7 +7,8 @@ import IngredientDetail from '@/screens/IngredientDetail';
 import IngredientCreate from '@/screens/IngredientCreate';
 import RecipeCreate from '@/screens/RecipeCreate';
 import RecipeDetail from '@/screens/RecipeDetail';
-const { Screen, Navigator } = createStackNavigator();
+import AddRecipeIngredient from '@/screens/AddRecipeIngredient';
+const { Screen, Navigator, Group } = createStackNavigator();
 const RootStack = () => {
   return (
     <Navigator
@@ -17,16 +18,21 @@ const RootStack = () => {
       <Screen name="Preload" component={Preload} />
       <Screen name="SignIn" component={SignIn} />
       <Screen name="MainApp" component={MainAppDrawer} />
-      <Screen
-        name="DetailIngredient"
-        component={IngredientDetail}
-        options={{
+      <Group
+        screenOptions={{
           headerShown: true,
         }}
-      />
-      <Screen name="DetailRecipe" component={RecipeDetail} />
-      <Screen name="CreateIngredient" component={IngredientCreate} />
-      <Screen name="CreateRecipe" component={RecipeCreate} />
+      >
+        <Screen name="DetailIngredient" component={IngredientDetail} />
+        <Screen name="DetailRecipe" component={RecipeDetail} />
+      </Group>
+      <Group>
+        <Screen name="CreateIngredient" component={IngredientCreate} />
+        <Screen name="CreateRecipe" component={RecipeCreate} />
+      </Group>
+      <Group screenOptions={{ presentation: 'modal' }}>
+        <Screen name="AddRecipeIngredient" component={AddRecipeIngredient} />
+      </Group>
     </Navigator>
   );
 };

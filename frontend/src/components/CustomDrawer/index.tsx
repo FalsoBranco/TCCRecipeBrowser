@@ -28,7 +28,7 @@ export default function CustomDrawerContent(props: DrawerContentProps) {
   }, []);
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
-      <Box flex="1" justifyContent="space-between">
+      <Box>
         <HStack justifyContent={'space-between'}>
           <VStack space="6">
             {/* UserInfo */}
@@ -47,31 +47,32 @@ export default function CustomDrawerContent(props: DrawerContentProps) {
               </Text>
             </Box>
             {/* Routers */}
-            <VStack divider={<Divider />} space="4">
-              <VStack>
-                {props.state.routeNames.map((name, index) => (
-                  <CustomDrawerItem
-                    key={name}
-                    px="5"
-                    py="3"
-                    rounded="md"
-                    bg={
-                      index === props.state.index
-                        ? 'rgba(6, 182, 212, 0.1)'
-                        : 'transparent'
-                    }
-                    index={index}
-                    name={name}
-                    props={props}
-                  />
-                ))}
-              </VStack>
-            </VStack>
           </VStack>
           <LogoutModal />
         </HStack>
+
         {/* Socials */}
       </Box>
+      <VStack divider={<Divider />} space="4">
+        <VStack w={'full'}>
+          {props.state.routeNames.map((name, index) => (
+            <CustomDrawerItem
+              key={name}
+              px="5"
+              py="3"
+              rounded="md"
+              bg={
+                index === props.state.index
+                  ? 'rgba(6, 182, 212, 0.1)'
+                  : 'transparent'
+              }
+              index={index}
+              name={name}
+              props={props}
+            />
+          ))}
+        </VStack>
+      </VStack>
     </DrawerContentScrollView>
   );
 }

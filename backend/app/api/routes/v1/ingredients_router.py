@@ -75,7 +75,6 @@ async def get_ingredient(
         ingredient = await ingredient_repo.get_ingredient_by_slug(
             account_id=account.id, slug=slug_or_id
         )
-    print(ingredient)
     return IngredientInResponse(ingredient=IngredientForResponse.from_orm(ingredient))
 
 

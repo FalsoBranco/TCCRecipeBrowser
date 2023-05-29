@@ -46,7 +46,7 @@ const Card = ({ data, detail }) => {
                 <Image
                   size="full"
                   source={{
-                    uri: 'https://www.holidify.com/images/cmsuploads/compressed/Bangalore_citycover_20190613234056.jpg',
+                    uri: 'https://placehold.co/400.png',
                   }}
                   alt="image"
                 />

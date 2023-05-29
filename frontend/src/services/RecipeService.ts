@@ -39,7 +39,6 @@ class RecipeService {
   }
   async create(recipeData) {
     try {
-      console.log(recipeData);
       const { data } = await api.post('/api/v1/recipes/', recipeData);
       return data;
     } catch (err) {
@@ -48,7 +47,6 @@ class RecipeService {
   }
   async get(recipeId: number) {
     try {
-      console.log(typeof recipeId);
       const { data } = await api.get(`api/v1/recipes/${recipeId}`);
       return data;
     } catch (error) {
@@ -56,7 +54,26 @@ class RecipeService {
       alert('Error: ' + error.response.data.detail);
     }
   }
+  async get_ingredients(recipeId: number) {
+    try {
+      const { data } = await api.get(`api/v1/recipes/${recipeId}/ingredients`);
+      return data;
+    } catch (error) {
+      console.log(error);
+      alert('Error: ' + error.response.data.detail);
+    }
+  }
+  async delete(recipeId) {
+    try {
+      await api.get(`api/v1/recipes/${recipeId}`);
+      return true;
+    } catch (error) {
+      console.log(error);
+      alert('Error: ' + error.response.data.detail);
+    }
+  }
 }
+
 const recipeService = new RecipeService();
 recipeService.init();
 export default recipeService;

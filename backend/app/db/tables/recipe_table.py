@@ -40,6 +40,5 @@ class Recipe(Base, IdMixin):
     ingredients: Mapped[List["RecipeIngredient"]] = relationship(
         back_populates="recipe",
         default_factory=list,
-        repr=False,
         init=False,
     )

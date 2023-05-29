@@ -85,7 +85,6 @@ class IngredientRepository(BaseRepository):
             unittype_repo=self.unittype_repo,
             slug=get_slug_from_title(unit),
         )
-        print(new_unit)
         if not new_unit:
             new_unit = UnitType(unit=unit, slug=get_slug_from_title(unit))
 

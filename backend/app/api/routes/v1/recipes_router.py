@@ -11,6 +11,7 @@ from app.models.schema.recipe_schema import (
     RecipeForResponse,
     RecipeInCreate,
     RecipeInResponse,
+    RecipeWithIngredientsForResponse,
 )
 from app.services.commons import get_slug_from_title
 from app.services.recipe_service import check_if_recipes_exists
@@ -69,7 +70,6 @@ async def get_recipe(
         recipe = await recipe_repo.get_recipe_by_slug(
             account_id=account.id, slug=slug_or_id
         )
-    print(recipe)
     return RecipeInResponse(recipe=RecipeForResponse.from_orm(recipe))
 
 
@@ -95,7 +95,6 @@ async def create_recipe(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Recipe already exists"
         )
-    print("passow")
     # Create new recipe
     recipe_row = await recipe_repo.create_new_recipe(
         amounts=new_recipe.amounts,
@@ -115,21 +114,14 @@ async def get_recipe_with_ingredients(
     recipe_id: int = Path(...),
     account: Account = Depends(get_current_user_authorizer()),
     recipe_repo: RecipeRepository = Depends(get_repository(RecipeRepository)),
-) -> None:
-    await recipe_repo.get_recipe_instructions(
+):
+    recipe = await recipe_repo.get_recipe_instructions(
         recipe_id=recipe_id, account_id=account.id
     )
-    return None
-
-    # ingredient_instructions: list[RecipeIngredientForResponse] = [
-    #     RecipeIngredientForResponse.from_orm(step) for step in recipe.ingredients
-    # ]
-
-    # recipe_for_response: RecipeWithInstructionsForResponse = (
-    #     RecipeWithInstructionsForResponse.from_orm(recipe)
-    # )
-    # recipe_for_response.ingredients = ingredient_instructions
-    # return RecipeWithInstructionInResponse(recipe=recipe_for_response)
+    recipe_response: RecipeWithIngredientsForResponse = (
+        RecipeWithIngredientsForResponse.from_orm(recipe)
+    )
+    return RecipeInResponse(recipe=recipe_response)
 
 
 @router.post("/{recipe_id}/make")

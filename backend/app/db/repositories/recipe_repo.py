@@ -86,7 +86,6 @@ class RecipeRepository(BaseRepository):
             unittype_repo=self.unittype_repo,
             slug=get_slug_from_title(unit),
         )
-        print(new_unit)
         if not new_unit:
             new_unit = UnitType(unit=unit, slug=get_slug_from_title(unit))
 
@@ -124,30 +123,38 @@ class RecipeRepository(BaseRepository):
             .options(
                 joinedload(
                     Recipe.ingredients,
-                    innerjoin=True,
                 ).joinedload(
                     RecipeIngredient.ingredient,
-                    innerjoin=True,
                 )
             )
         )
         recipe_row = await self.session.execute(query)
-
         result: Recipe | None = recipe_row.unique().scalar_one_or_none()
-        print(result.ingredients)
+
         if not result:
             raise EntityDoesNotExist
 
         return result
 
     async def make_recipe(self, *, recipe_id: int, quantity: int, account_id: int):
+        recipe = await self.get_recipe_instructions(
+            account_id=account_id, recipe_id=recipe_id
+        )
+
+        for instruction in recipe.ingredients:
+            if instruction.quantity > instruction.ingredient.quantity:
+                raise ValueError("not enough quantity")
+            instruction.ingredient.quantity -= instruction.quantity
+
+        self.session.add(recipe)
+
+        await self.session.commit()
+
         created_recipe = CreatedRecipe(
             account_id=account_id,
             quantity=quantity,
             recipe_id=recipe_id,
             created_at=datetime.datetime.now(),
         )
-
         self.session.add(created_recipe)
-        await self.session.commit()
         await self.session.commit()

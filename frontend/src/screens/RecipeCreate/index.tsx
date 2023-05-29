@@ -10,10 +10,11 @@ import {
   TextArea,
 } from 'native-base';
 import { Controller, useForm } from 'react-hook-form';
-import { DateTimePickerAndroid } from '@react-native-community/datetimepicker';
 import RecipeService from '@/services/RecipeService';
+import { useNavigation } from '@react-navigation/native';
 
 const RecipeCreate = () => {
+  const navigation = useNavigation();
   const {
     control,
     handleSubmit,
@@ -31,6 +32,7 @@ const RecipeCreate = () => {
       },
     };
     await RecipeService.create(recipeData);
+    navigation.goBack();
   }
 
   return (
@@ -57,10 +59,10 @@ const RecipeCreate = () => {
                     bold: true,
                   }}
                 >
-                  Nome dda Receitas
+                  Receita
                 </FormControl.Label>
                 <Input
-                  placeholder="John"
+                  placeholder="Nome da Receita"
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
@@ -78,10 +80,9 @@ const RecipeCreate = () => {
                     bold: true,
                   }}
                 >
-                  Quantidade de Porções
+                  Quantidade
                 </FormControl.Label>
                 <Input
-                  placeholder="John"
                   onChangeText={(text) => onChange(parseInt(text))}
                   onBlur={onBlur}
                   keyboardType="numeric"
@@ -103,7 +104,7 @@ const RecipeCreate = () => {
                   Tipo da Unidade
                 </FormControl.Label>
                 <Input
-                  placeholder="John"
+                  placeholder="Porção, Unidade"
                   onChangeText={onChange}
                   onBlur={onBlur}
                   value={value}
